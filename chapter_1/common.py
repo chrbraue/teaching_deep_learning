@@ -88,9 +88,14 @@ def new_figure(probability_labels=False):
     figure_height = 3.55 if probability_labels else 3.35
     bottom = 0.23 if probability_labels else 0.18
     fig = plt.figure(figsize=(6.3, figure_height))
-    width = 0.365
+    # GridSpec steuert den Zwischenraum; beide Plotflächen bleiben quadratisch.
+    left, right, gap = 0.075, 0.88, 0.15
+    width = (right - left - gap) / 2
     height = width * 6.3 / figure_height
-    axes = [fig.add_axes([left, bottom, width, height]) for left in (0.085, 0.515)]
+    grid = fig.add_gridspec(1, 2, left=left, right=right,
+                           bottom=bottom, top=bottom + height,
+                           wspace=gap / width)
+    axes = [fig.add_subplot(grid[0, column]) for column in range(2)]
     return fig, axes
 
 
@@ -117,8 +122,8 @@ def draw_panel(ax, points, y, w, b, limits, labels, title, transform=None):
 def finish(fig, axes, image, name, colorbar_label, exam=False):
     # In Achsenkoordinaten verankert: exakt y=0 bis y=1 der Plotfläche,
     # unabhängig von Titeln, Beschriftungen, Renderer und Exportformat.
-    # Rechte y-Beschriftung fest im Zwischenraum, frei von linker Plotfläche.
-    axes[1].yaxis.set_label_coords(-0.04, 0.58)
+    # Automatische Labelposition außerhalb der Ticklabels, kein fester Versatz.
+    axes[1].yaxis.labelpad = 6
     from matplotlib.transforms import Bbox
     def colorbar_position(_ax, _renderer):
         box = axes[1].get_position()
