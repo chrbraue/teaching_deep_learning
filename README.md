@@ -129,3 +129,8 @@ Ein funktionierendes Matplotlib-GUI-Backend (z.B. Tk oder Qt) ist hierfür nöti
 aber keine Pflichtabhängigkeit der statischen Druckfassung. Die GUI verwendet
 MathText mit Computer-Modern-Mathematikschrift. Regler-Callbacks wurden mit Agg
 geprüft; manuelle Fensterbedienung ist in der bisherigen Prüfung noch offen.
+
+## Schematische Fehlerzerlegung
+
+Unter [chapter_4](chapter_4/README.md) liegt eine schematische Risikozerlegung. Aufruf:
+`python chapter_4/risk_decomposition.py`. Die bestehenden Abhängigkeiten genügen.
