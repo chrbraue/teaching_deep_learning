@@ -132,5 +132,20 @@ geprüft; manuelle Fensterbedienung ist in der bisherigen Prüfung noch offen.
 
 ## Schematische Fehlerzerlegung
 
-Unter [chapter_4](chapter_4/README.md) liegt eine schematische Risikozerlegung. Aufruf:
-`python chapter_4/risk_decomposition.py`. Die bestehenden Abhängigkeiten genügen.
+Unter [chapter_4](chapter_4/README.md) liegen zwei aufeinander abgestimmte
+schematische Darstellungen. Die bestehenden Abhängigkeiten genügen:
+
+```sh
+python chapter_4/generalization_gap.py
+python chapter_4/risk_decomposition.py
+```
+
+Die Kurvenfunktionen und Druckeinstellungen stehen gemeinsam in
+`chapter_4/risk_common.py`. Beide Skripte schreiben nach `chapter_4/output/`.
+
+
+Die Originalabbildung zur ℓ₁-Norm-Regularisierung lässt sich mit
+`python chapter_4/l1_regularization.py` reproduzieren. Optional öffnet
+`--interactive` eine zusätzliche Soft-Thresholding-Ansicht mit Schiebereglern.
+Mathematische Voraussetzungen und Hinweise zum GUI-Backend stehen in der
+[Dokumentation zu Kapitel 4](chapter_4/README.md).

@@ -1,32 +1,91 @@
-# Schematische Fehlerzerlegung
+# Schematische Lernfehler und Fehlerzerlegung
 
-Dieses Beispiel illustriert die Zerlegung des Generalisierungsrisikos.
-Die Kurven sind **keine empirischen Messergebnisse**.
+Beide Beispiele verwenden dieselbe blaue Kurve des Generalisierungsfehlers und
+sind **keine empirischen Messergebnisse**.
 
 Mit der bestehenden Umgebung aus der Repository-README:
 
 ```sh
+python chapter_4/generalization_gap.py
 python chapter_4/risk_decomposition.py
 ```
 
 Benötigt NumPy, Matplotlib, pdflatex mit den bereits dokumentierten TeX-Paketen
 und pdftoppm aus Poppler. Die Dateien entstehen unter `chapter_4/output/`:
-`risk_decomposition.pdf`, `.png` und `.json`. Beim Import wird nichts erzeugt.
+PDF, PNG und JSON je Beispiel. Beim Import wird nichts geschrieben.
+Die PNG-Vorschau stammt direkt aus der PDF. Die JSON-Dateien enthalten die
+Kurvenwerte und Kapazitäten der Abstandspfeile zur Nachprüfung.
 
-Für eine qualitative Kapazität c zwischen 0 und 1 werden einfache Funktionen
-verwendet: Bayes-Risiko 0,12, Approximationsfehler 0,65 exp(−4c), Schätzfehler
-0,02 + 0,45c². Das beste Risiko innerhalb der Hypothesenmenge ist Bayes plus
-Approximation; das Gesamtrisiko enthält zusätzlich den Schätzfehler. Grün wird
-stets aus diesen Komponenten berechnet. Die optimale Kapazität ist nur das
-Minimum auf dem festen schematischen Raster, keine reale Modellwahl.
+`risk_common.py` bündelt die kleinen gemeinsamen Funktionen und Druckeinstellungen.
+Die bestehende Risikozerlegung bleibt numerisch unverändert. Für eine qualitative
+Kapazität c von 0 bis 1 gilt:
 
-Der graue Verlauf ist damit das beste Klassenrisiko, nicht allein der
-Approximationsfehler. Der Doppelpfeil bezeichnet den Abstand zur Bayes-Basis.
-Ein steigender Schätzfehler ist keine allgemeine Monotoniebehauptung über
-Lernverfahren. Die Grafik illustriert die Risikozerlegung relativ zur
-Hypothesenmenge, nicht die klassische Bias-Varianz-Zerlegung.
+- Bayes-Risiko: 0,12 (konstant).
+- Approximationsfehler: 0,65 exp(−4c).
+- Schätzfehler: 0,02 + 0,45c².
+- Minimales wahres Risiko innerhalb der Hypothesenmenge: Bayes plus Approximation.
+- Generalisierungsfehler: Bayes plus Approximation plus Schätzfehler.
+- Zusätzlicher schematischer Trainingsfehler: 0,65 exp(−5c) + 0,02.
 
-Druckausgabe mit Computer-Modern-Mathematik über den PGF/pdflatex-Export. PDF-
-Metadaten sind für wiederholbare Ausgaben festgelegt; die PNG-Vorschau stammt
-direkt aus der PDF. Alle Kurven sind zusätzlich durch Linienarten unterschieden.
-Es wird keine Simulation und kein Training ausgeführt.
+Die Generalisierungslücke ist Generalisierungsfehler minus Trainingsfehler.
+Sie ist nicht der Schätzfehler, der den Abstand zwischen dem gelernten wahren
+Risiko und dem minimalen wahren Risiko innerhalb der Hypothesenmenge bezeichnet.
+Die Pfeile markieren diese Differenzen jeweils bei einer festen Kapazität.
+Die optimale Kapazität ist das Minimum der gemeinsamen Kurve auf dem festen
+Raster. Die Verläufe sind kein allgemeines Gesetz über reale Lernverfahren.
+
+Beide PDFs verwenden dieselben Abmessungen, Achsengrenzen und Schriftgrößen.
+Der Generalisierungsfehler ist durchgehend blau, Trainingsfehler orange gestrichelt,
+Schätzfehler orange strichpunktiert. Das Bayes-Risiko und das minimale wahre Risiko
+innerhalb der Hypothesenmenge sind durch neutrale Grautöne und andere Linienarten
+unterschieden. Die Grafik erläutert die Risikozerlegung relativ zur
+Hypothesenmenge, nicht die klassische Bias-Varianz-Identität.
+
+Die Druckausgabe nutzt echten LaTeX-Satz mit Computer-Modern-Mathematik über
+PGF/pdflatex. Feste Metadaten erlauben bytegleiche Wiederholungsexporte in der
+geprüften Umgebung. Exportverzeichnis und Python-Caches sind aus Git ausgeschlossen.
+
+
+## ℓ₁-Norm-Regularisierung und Soft-Thresholding
+
+```sh
+python chapter_4/l1_regularization.py
+python chapter_4/l1_regularization.py --interactive
+```
+
+Der erste Aufruf erzeugt die feste Druckfassung `output/l1_regularization.pdf`
+mit PNG-Vorschau und einer JSON-Datei der Druckparameter. Der zweite erzeugt
+zunächst dieselbe feste Druckfassung und öffnet zusätzlich eine Ansicht mit
+Schiebereglern. Slider-Änderungen überschreiben keine Druckdateien.
+
+Links wird das regularisierte Gewicht als Funktion des ursprünglichen Gewichts
+gezeigt, rechts als Funktion von gamma. Identität bzw. ursprüngliches Gewicht
+stehen grau gestrichelt, die Lösung orange und die Dämpfungspfeile blau.
+Die Originalvorlage hat nur symbolische Skalen. Die normierten Druckwerte sind
+gamma = 1, H_ii = 1 und rechts w_hat_i = 1. Sie reproduzieren die dargestellten
+Skalenverhältnisse und sind keine aus historischen Daten rekonstruierten Parameter.
+
+Beide Ansichten berechnen dieselbe Soft-Thresholding-Funktion:
+`sign(w_hat) * max(abs(w_hat) - gamma/H_ii, 0)`.
+Sie löst das skalare Teilproblem der quadratischen Approximation mit positiver
+diagonaler Hessematrix. Erforderlich ist H_ii > 0 und gamma >= 0.
+
+Interaktiv ändern Sie gamma (0 bis 3), w_hat_i (-2 bis 2) und H_ii (0,25 bis 4).
+Die Achsen passen sich an, damit Schwellen und Lösungen sichtbar bleiben.
+Die rechten Schwellenwerte lauten für beliebiges Vorzeichen H_ii * abs(w_hat_i).
+Der aktuelle Schwellenwert gamma/H_ii und die Lösung werden numerisch angezeigt.
+Blaue Punkte markieren die aktuellen Werte. Reset stellt die Druckwerte wieder her.
+
+Für die Regler wird eine grafische Sitzung mit einem Matplotlib-GUI-Backend
+wie TkAgg oder QtAgg benötigt. Falls nötig unter Linux/macOS ausdrücklich mit
+`MPLBACKEND=TkAgg python chapter_4/l1_regularization.py --interactive` starten.
+Tk bzw. Qt muss im eigenen Python-System verfügbar sein. Die statische PDF
+benötigt keinen Bildschirm und kein GUI-Backend. Es werden keine zusätzlichen
+Frameworks oder Notebooks verwendet und keine Pakete automatisch installiert.
+
+Geprüft sind die analytischen Fälle, Kurven und Pfeile sowie Slider- und Reset-
+Callbacks unter Agg. Zusätzlich wurde am 24.11.2026 ein automatisierter Test mit
+einem tatsächlich geöffneten TkAgg-Fenster im Benutzerkontext durchgeführt.
+Slider und Reset wurden dabei über Canvas-Mausereignisse geprüft. Eine manuelle
+Benutzerbedienung wurde nicht geprüft. Für interaktive Nutzung bleiben ein
+geeignetes GUI-Backend und eine erreichbare grafische Sitzung erforderlich.
